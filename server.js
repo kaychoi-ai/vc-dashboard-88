@@ -41,13 +41,21 @@ app.post('/api/ai-insights', async (req, res) => {
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
+    console.log(`[Server] Raw AI Response Length: ${text.length} chars`);
     
-    // Attempt to cleanse and parse JSON from the AI response
-    const cleanedJson = text.replace(/```json|```/g, '').trim();
-    res.json(JSON.parse(cleanedJson));
+    // Improved JSON extraction: find the first { and last }
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error("AI response did not contain valid JSON structure.");
+    }
+    
+    const jsonString = jsonMatch[0];
+    const data = JSON.parse(jsonString);
+    console.log(`[Server] Successfully parsed AI insights.`);
+    res.json(data);
   } catch (error) {
-    console.error("AI Insight Error:", error);
-    res.status(500).json({ error: "Failed to generate AI insights from the server." });
+    console.error("AI Insight Error:", error.message);
+    res.status(500).json({ error: error.message || "Failed to generate AI insights from the server." });
   }
 });
 
