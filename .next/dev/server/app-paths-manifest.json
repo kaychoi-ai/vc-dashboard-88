@@ -1,4 +1,4 @@
 {
-  "/api/ai-insights/route": "app/api/ai-insights/route.js",
-  "/api/sales-data/route": "app/api/sales-data/route.js"
+  "/api/sales-data/route": "app/api/sales-data/route.js",
+  "/page": "app/page.js"
 }
